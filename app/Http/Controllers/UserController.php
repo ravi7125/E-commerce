@@ -48,7 +48,7 @@ class UserController extends Controller
         }
     }
 
-      /**
+    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request ,$id)
@@ -68,7 +68,10 @@ class UserController extends Controller
             return error($validaiton->errors()->first());
         }
        
-        $user  = User::findOrFail($id);
+        $user  = User::find($id);
+        if (!$user) {
+            return error('User not found');
+        }
     
         $user->update($request->only(['name','email,,password','phone','pincode','address',  'city','role']));
     
@@ -85,7 +88,7 @@ class UserController extends Controller
         return error('User Already Deleted');
     }
 
-       //User Change Password
+    //User Change Password
        public function changepassword(Request $request)
        {
            $validation = Validator::make($request->all(), [
@@ -108,17 +111,17 @@ class UserController extends Controller
            return response()->json([
                'message' => 'Invalid current password',
            ], 400);
-       }
+        }
 
-       //Logout user
-    public function logout(Request $request)
-    {
-        $request->user()->currentAccessToken()->delete();
-        return response()->json([
-            "message" => "User successfully logout",
-        ]);
-        return response()->json(['message' => 'Logout successfully']);
-    }
+    //Logout user
+        public function logout(Request $request)
+        {
+            $request->user()->currentAccessToken()->delete();
+            return response()->json([
+                "message" => "User successfully logout",
+            ]);
+            return response()->json(['message' => 'Logout successfully']);
+        }
 
     
 }
