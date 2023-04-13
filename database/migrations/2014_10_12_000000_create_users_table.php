@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('phone', 20)->default('N/A');
-            $table->unsignedInteger('pincode')->default();
-            $table->string('address', 30)->default();
-            $table->string('city', 255)->default();
+            $table->string('phone', 20)->nullable('N/A');
+            $table->unsignedInteger('pincode')->nullable();
+            $table->string('address', 30)->nullable();
+            $table->string('city', 255)->nullable();
             $table->string('role')->default('user');
             $table->timestamps();
             $table->rememberToken();
@@ -31,8 +31,14 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
+    // public function down(): void
+    // {
+    //     Schema::dropIfExists('users');
+    // }
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::table('users' ,function(Blueprint $table) {
+            $table->dropColumn('role');
+        });
     }
 };

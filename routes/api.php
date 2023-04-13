@@ -9,6 +9,7 @@ use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Middleware\CheckRole;
 
 
 /*
@@ -26,65 +27,71 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//auth
+//auth route:
 Route::controller(AuthController::class)->prefix('auth')->group(function () { 
-    Route::post("create", 'create'); 
-    Route::post('login', 'login');
-    Route::post('/forgotPasswordLink', 'forgotPasswordLink');
-    Route::post('/forgotPassword', 'forgotPassword');
-    Route::post("list", 'list');
+    Route::post ("create", 'create'); 
+    Route::post  ('login', 'login');
+    Route::post  ('/forgotPasswordLink','forgotPasswordLink');
+    Route::post  ('/forgotPassword', 'forgotPassword');
+    Route::post  ("list", 'list');
 
     
 });
 
-//User route
-Route::group(['middleware' => ['auth:sanctum']], function () {
+//User route:
+ Route::group(['middleware' => ['auth:sanctum']], function () {
 Route::controller(UserController::class)->prefix('user')->group(function () { 
-    Route::get("view/{id?}", 'view');
-    Route::delete("delete/{id}", 'destroy');
-    Route::put("update/{id}", 'update');
-    Route::post('/logout', 'logout');
-    Route::post('/changepassword', 'changepassword');
-    Route::post("list", 'list'); 
-    
-    });
+    Route::get    ("view/{id?}", 'view')    ->middleware ('role:admin|user');
+    Route::delete ("delete/{id}", 'destroy')->middleware ('role:admin|user');
+    Route::put    ("update/{id}", 'update') ->middleware ('role:admin|user');
+    Route::post   ('/logout', 'logout')     ->middleware ('role:admin|user');
+    Route::post ('/changepassword','changepassword')->middleware ('role:admin|user');
+    Route::post   ("list", 'list')          ->middleware ('role:admin|user');  
 });
-
+//Category route:
 Route::controller(CategoryController::class)->prefix('category')->group(function(){
-    Route::post("create", 'create'); 
-    Route::get("view/{id?}", 'view');
-    Route::delete("delete/{id}", 'destroy');
-    Route::put("/update/{id}", 'update');
-    Route::post("list", 'list'); 
+    Route::post  ("create", 'create')      ->middleware ('role:admin');
+    Route::get   ("view/{id?}", 'view')    ->middleware ('role:admin|user');
+    Route::delete("delete/{id}",'destroy') ->middleware ('role:admin');
+    Route::put   ("/update/{id}", 'update')->middleware ('role:admin');
+    Route::post  ("list",'list')           ->middleware ('role:admin|user'); 
 });
-
+//Subcategory route:
 Route::controller(SubcategoryController::class)->prefix('subcategory')->group(function(){
-    Route::post("create", 'create'); 
-    Route::get("view/{id?}", 'view');
-    Route::delete("delete/{id}", 'destroy');
-    Route::put("update/{id}", 'update');
-    Route::post("list", 'list'); 
-});
-
+    Route::post  ("create", 'create')      ->middleware ('role:admin'); 
+    Route::get   ("view/{id?}", 'view')    ->middleware ('role:admin|user');
+    Route::delete("delete/{id}", 'destroy')->middleware ('role:admin');
+    Route::put   ("update/{id}", 'update') ->middleware ('role:admin');
+    Route::post   ("list", 'list')         ->middleware ('role:admin|user'); 
+    });
+//Products route:    
 Route::controller(ProductsController::class)->prefix('products')->group(function(){
-    Route::post("create", 'create'); 
-    Route::get("view/{id?}", 'view');
-    Route::delete("delete/{id}", 'destroy');
-    Route::put("update/{id}", 'update');
-    Route::post("list", 'list'); 
+    Route::post  ("create", 'create')       ->middleware ('role:admin'); 
+    Route::get   ("view/{id?}", 'view')     ->middleware ('role:admin|user'); 
+    Route::delete("delete/{id}", 'destroy') ->middleware ('role:admin'); 
+    Route::put   ("update/{id}", 'update')  ->middleware ('role:admin'); 
+    Route::post  ("list", 'list')           ->middleware ('role:admin|user');
 });
-
+    
 Route::controller(CartController::class)->prefix('cart')->group(function(){
-    Route::post("create", 'create'); 
-    Route::get("view/{id?}", 'view');
-    Route::delete("delete/{id}", 'destroy');
-    Route::put("update/{id}", 'update');
-    Route::post("list", 'list'); 
+    Route::post  ("create", 'create')        ->middleware ('role:admin'); 
+    Route::get   ("view/{id?}", 'view')      ->middleware ('role:admin|user'); 
+    Route::delete("delete/{id}", 'destroy')  ->middleware ('role:admin'); 
+     Route::put  ("update/{id}", 'update')   ->middleware ('role:admin'); 
+    Route::post  ("list", 'list')            ->middleware ('role:admin|user');   
 });
 Route::controller(OrderController::class)->prefix('order')->group(function(){
-    Route::post("create", 'create'); 
-    Route::get("view/{id?}", 'view');
-    Route::delete("delete/{id}", 'destroy');
-    Route::put("update/{id}", 'update');
-    Route::post("list", 'list'); 
+    Route::post  ("create", 'create')        ->middleware ('role:admin|user'); 
+    Route::get   ("view/{id?}", 'view')      ->middleware ('role:admin|user');
+    Route::delete("delete/{id}", 'destroy')  ->middleware ('role:admin|user');
+    Route::put   ("update/{id}", 'update')   ->middleware ('role:admin|user');
+    Route::post  ("list", 'list')            ->middleware ('role:admin|user'); 
 });
+    
+});
+
+
+
+
+
+

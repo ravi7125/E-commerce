@@ -115,9 +115,9 @@ class UserController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
         return response()->json([
-            "message" => "User successfully logged out",
+            "message" => "User successfully logout",
         ]);
-        return response()->json(['message' => 'Logged out successfully']);
+        return response()->json(['message' => 'Logout successfully']);
     }
 
     

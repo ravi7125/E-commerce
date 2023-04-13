@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Traits\Listingapi;
@@ -29,9 +28,9 @@ class AuthController extends Controller
             'pincode'  => 'required|numeric',
             'address'  => 'required|max:30',
             'city'     => 'required|max:255',
-            'role'     => 'required|max:20', 
-       
+            'role'     => 'required|max:20',       
         ]);   
+        
         if ($validaiton->fails()) {
             return error($validaiton->errors()->first());
         }
@@ -43,9 +42,11 @@ class AuthController extends Controller
             
         ]);
         Mail::to($user->email)->send(new WelcomeMail($user));
+        
         return ok($user);
     }
-    // login 
+    
+// login 
     public function login(Request $request)
     {            
         $request->only('email','password');
@@ -62,8 +63,7 @@ class AuthController extends Controller
         return response()->json(['The email address or password you entered is incorrect.' ], 401);
      
     }
-
-    //forogt password link send mailtrap
+//forogt password link send mailtrap
     public function forgotPasswordLink(Request $request)
     {
         $validation = Validator::make($request->all(), [
@@ -81,7 +81,7 @@ class AuthController extends Controller
         ]);
         return "Mail Sent Successfully";
     }
-    // user forgot password
+// user forgot password
     public function forgotPassword(Request $request)
     {
         $validation = Validator::make($request->all(), [

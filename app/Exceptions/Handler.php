@@ -5,21 +5,21 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Auth\AuthenticationException;
 
 class Handler extends ExceptionHandler
 {
+
     public function render($request, Throwable $exception)
-{
-    if ($exception instanceof ModelNotFoundException) {
-        return response()->json(['message' => 'Resource not found'], Response::HTTP_NOT_FOUND);
-    } elseif ($exception instanceof ValidationException) {
-        return response()->json(['message' => $exception->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+    {
+        if ($exception instanceof AuthenticationException) {
+            return response()->json(['error' => 'Unauthorized Token'], 401);
+        }
+        if ($request->expectsJson()) {
+            return response()->json(['error' => 'Resource not found'], 400);
+        }
+        return parent::render($request, $exception);
     }
-
-    // You can add more exception types here and return appropriate responses.
-
-    return parent::render($request, $exception);
-}
 
     /**
      * A list of exception types with their corresponding custom log levels.
@@ -60,3 +60,7 @@ class Handler extends ExceptionHandler
         });
     }
 }
+
+//
+
+
