@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Products;
 use Illuminate\Support\Facades\Validator;
 use App\Traits\Listingapi;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
@@ -16,21 +17,13 @@ class CartController extends Controller
      */
     public function list(Request $request)
     {
-        $query = Cart::query(); // get all modules
-        $searchable_fields = ['user_id']; // fields to search
-    
-        // validate request
-        $this->ListingValidation();
-    
-        // filter, search and paginate data
-        $data = $this->filterSearchPagination($query, $searchable_fields);
-    
-        // return response
-        return response()->json([
-            'success' => true,
-            'data' => $data['query']->get(),
-            'total' => $data['count']
-        ]);
+        $cart  = Cart::query();
+        if (Auth::user()->role == 'user') {
+            $user_id = Auth::user()->id;
+            $cart = $cart->where('user_id', $user_id);
+        }
+        $cart = $cart->get();
+        return ok('cart detail', $cart);
     }
 
     /**
@@ -70,4 +63,35 @@ class CartController extends Controller
         }
     }
 
+    public function update(Request $request ,$id)
+    {
+        $validaiton = Validator::make($request->all(), [
+            'user_id'     => 'required',
+            'quantity'    => 'required',
+            'price'       => 'required',
+            'product_id'  => ['required',
+        function($attribute, $value, $fail) {
+            if (!Products::where('id', $value)->exists()) {
+                $fail('Invalid product_id.');
+                }
+            }
+        ]
+    ]);   
+        if ($validaiton->fails()) {
+            return error($validaiton->errors()->first());
+        }
+        $cart  = Cart::find($id);
+        if (!$cart) {
+            return error('cart not found');
+        }
+        $cart->update($request->all());
+    
+        return ok($cart);
+    }
+    public function destroy($id)
+    {
+        $cart = Cart::findOrFail($id)->delete();
+        return ok('Cart Delete Successfully');
+    }
+    
 }

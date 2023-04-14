@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Models\Products;
 use App\Models\subcategory;
+use App\Models\Category;
 use Illuminate\Support\Facades\Validator;
 use App\Traits\Listingapi;
 class ProductsController extends Controller
@@ -42,11 +43,20 @@ class ProductsController extends Controller
             'description'      => 'required|string|max:255',
             'price'            => 'required|integer|min:0',
             'quantity'         => 'required',
-            'categories_id'    => 'required',
-            'subcategories_id' => ['required',
+            'categories_id'    => 'required|exists:categories,id',
+            'subcategories_id' => 'required|exists:subcategories,id',
+            'categories_id' =>[ 'required',
+            function($attribute, $value, $fail) {
+                if (!Category::where('id', $value)->exists()) {
+                    $fail('Invalid categories_id.');
+                } elseif (Category::where('id', $value)->onlyTrashed()->exists()) {
+                 }}
+        ],
+        'subcategories_id'  => [
+            'required',
             function($attribute, $value, $fail) {
                 if (!subcategory::where('id', $value)->exists()) {
-                    $fail('Invalid subcategories_id.');
+                    $fail('Invalid sub_category_id.');
                 }
             }
         ]
@@ -82,11 +92,20 @@ class ProductsController extends Controller
             'description'      => 'required|string|max:255',
             'price'            => 'required|integer|min:0',
             'quantity'         => 'required',
-            'categories_id'    => 'required',
-            'subcategories_id' => ['required',
+            'categories_id'    => 'required|exists:categories,id',
+            'subcategories_id' => 'required|exists:subcategories,id',
+            'categories_id' =>[ 'required',
+            function($attribute, $value, $fail) {
+                if (!Category::where('id', $value)->exists()) {
+                    $fail('Invalid categories_id.');
+                } elseif (Category::where('id', $value)->onlyTrashed()->exists()) {
+                 }}
+        ],
+        'subcategories_id'  => [
+            'required',
             function($attribute, $value, $fail) {
                 if (!subcategory::where('id', $value)->exists()) {
-                    $fail('Invalid subcategories_id.');
+                    $fail('Invalid sub_category_id.');
                 }
             }
         ]
@@ -105,14 +124,9 @@ class ProductsController extends Controller
      
     public function destroy($id)
     {
-        $products = Products::where('id', $id)->first();
-        if ($products) {
-            $products->delete();
+        $products = Products::findOrFail($id)->delete();
         return ok('Products Delete Successfully');
-        }
-        return error('Products Already Deleted');
     }
-
 }
 
 

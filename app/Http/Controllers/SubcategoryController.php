@@ -41,10 +41,10 @@ class SubcategoryController extends Controller
     {
         $validaiton = Validator::make($request->all(), [
             'name'            => 'required|max:25',
-            'categories_id'   => ['required',
+            'categories_id'   => ['required','exists:categories,id',
             function($attribute, $value, $fail) {
                 if (!Category::where('id', $value)->exists()) {
-                    $fail('Invalid category_id.');
+                    $fail('The selected categories id is invalid.');
                 }
             }
         ]
@@ -77,8 +77,8 @@ class SubcategoryController extends Controller
     {
         $validaiton = Validator::make($request->all(), [
             'name'            => 'required|max:25',
-            'categories_id'   => ['required',
-           function($attribute, $value, $fail) {
+            'categories_id'   => ['required','exists:categories,id',
+            function($attribute, $value, $fail) {
                 if (!Category::where('id', $value)->exists()) {
                     $fail('Invalid category_id.');
                 }
@@ -98,14 +98,9 @@ class SubcategoryController extends Controller
     }
     public function destroy($id)
     {
-        $subcategory = subcategory::where('id', $id)->first();
-        if ($subcategory) {
-            $subcategory->delete();
+        $subcategory = subcategory::findOrFail($id)->delete();
         return ok('Subcategory Delete Successfully');
-        }
-        return error('Subcategory Already Deleted');
     }
-
 
 }
 

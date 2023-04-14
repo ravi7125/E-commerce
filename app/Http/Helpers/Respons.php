@@ -8,7 +8,7 @@ if(!function_exists('ok')){
     {
         $response = [
             'status'    =>  $status,
-            'message'   =>  $message ?? 'success',
+            'message'   =>  $message ?? 'successfully completed',
             'data'      =>  $data
         ];
 

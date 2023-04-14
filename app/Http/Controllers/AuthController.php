@@ -11,6 +11,8 @@ use Illuminate\Support\Str;
 use App\Notifications\ResetPasswordNotification;
 use App\Models\PasswordReset;
 use App\Mail\WelcomeMail;
+use Carbon\Carbon;
+
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
@@ -21,14 +23,14 @@ class AuthController extends Controller
     public function create(Request $request)
     {
         $validaiton = Validator::make($request->all(), [
-            'name'     => 'required|max:25',
-            'email'    => 'required|email|max:255|unique:users',
-            'password' => 'required|min:8|max:10',
-            'phone'    => 'required|numeric',
-            'pincode'  => 'required|numeric',
-            'address'  => 'required|max:30',
-            'city'     => 'required|max:255',
-            'role'     => 'required|max:20',       
+            'name'         => 'required|max:25',
+            'email'        => 'required|email|max:255|unique:users',
+            'password'     => 'required|min:8|max:10',
+            'phone'        => 'required|numeric',
+            'pincode'      => 'required|numeric',
+            'address'      => 'required|max:30',
+            'city'         => 'required|max:255',
+            'role'         => 'required|max:20',       
         ]);   
         
         if ($validaiton->fails()) {
@@ -37,8 +39,8 @@ class AuthController extends Controller
 
         $user = User::create($request->only(['name','email,,password','phone','pincode','address',  'city','role'])
         + [
-            'password' =>  Hash::make($request->password),
-            'email'    => $request->email,
+            'password'  =>   Hash::make($request->password),
+            'email'     =>   $request->email,
             
         ]);
         Mail::to($user->email)->send(new WelcomeMail($user));
@@ -70,7 +72,7 @@ class AuthController extends Controller
             'email' => 'required|email|exists:users,email'
         ]);
         if ($validation->fails()) {
-            return errorResponse($validation->errors()->first());
+            return error($validation->errors()->first());
         }
         $user = User::where('email', $request->email)->first();
         $token = Str::random(16);
@@ -79,16 +81,16 @@ class AuthController extends Controller
             'token' => $token,
             'email' => $request->email
         ]);
-        return "Mail Sent Successfully";
+      
+        return response()->json('message => Mail Sent.');
     }
 // user forgot password
     public function forgotPassword(Request $request)
     {
         $validation = Validator::make($request->all(), [
-            'token'     => 'required|exists:password_resets,token',
-            'email'     => 'required|exists:password_resets,email|exists:users,email',
-            'password'  => 'required|min:8|confirmed',
-            'password_confirmation' => 'required'
+            'token'                  => 'required|exists:password_resets,token',
+            'password'               => 'required|min:8|confirmed',
+            'password_confirmation'  => 'required'
         ]);
         if ($validation->fails()) {
             return error($validation->errors()->first());
@@ -98,6 +100,9 @@ class AuthController extends Controller
         $user->update([
             'password'  => Hash::make($request->password)
         ]);
-        return 'Password Changed Successfully';    
+      
+        return response()->json('message => Password Changed Success');
     }
+
+
 }

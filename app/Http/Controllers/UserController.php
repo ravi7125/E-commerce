@@ -75,18 +75,15 @@ class UserController extends Controller
     
         $user->update($request->only(['name','email,,password','phone','pincode','address',  'city','role']));
     
-        return ok('User data updated successfully' );
+        return ok($user);
     }
      
     public function destroy($id)
     {
-        $user = User::where('id', $id)->first();
-        if ($user) {
-            $user->delete();
+        $user = User::findOrFail($id)->delete();
         return ok('User Delete Successfully');
-        }
-        return error('User Already Deleted');
     }
+
 
     //User Change Password
        public function changepassword(Request $request)

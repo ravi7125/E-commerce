@@ -88,11 +88,7 @@ class CategoryController extends Controller
     
     public function destroy($id)
     {
-        $category = Category::where('id', $id)->first();
-        if ($category) {
-            $category->delete();
+        $category = Category::findOrFail($id)->delete();
         return ok('Category Delete Successfully');
-        }
-        return error('Category Already Deleted');
     }
 }

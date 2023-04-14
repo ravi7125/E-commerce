@@ -15,11 +15,18 @@ class Handler extends ExceptionHandler
         if ($exception instanceof AuthenticationException) {
             return response()->json(['error' => 'Unauthorized Token'], 401);
         }
-        if ($request->expectsJson()) {
-            return response()->json(['error' => 'Resource not found'], 400);
+    
+        if ($exception instanceof ModelNotFoundException) {
+            return response()->json(['error' => 'Record not found'], 400);
         }
+    
+        if ($request->expectsJson()) {
+            return response()->json(['error' => 'Resource not found'], 404);
+        }
+    
         return parent::render($request, $exception);
     }
+    
 
     /**
      * A list of exception types with their corresponding custom log levels.

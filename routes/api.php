@@ -10,8 +10,6 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Middleware\CheckRole;
-
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -33,9 +31,7 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post  ('login', 'login');
     Route::post  ('/forgotPasswordLink','forgotPasswordLink');
     Route::post  ('/forgotPassword', 'forgotPassword');
-    Route::post  ("list", 'list');
-
-    
+    Route::post  ("list", 'list');    
 });
 
 //User route:
@@ -77,14 +73,14 @@ Route::controller(CartController::class)->prefix('cart')->group(function(){
     Route::post  ("create", 'create')        ->middleware ('role:admin'); 
     Route::get   ("view/{id?}", 'view')      ->middleware ('role:admin|user'); 
     Route::delete("delete/{id}", 'destroy')  ->middleware ('role:admin'); 
-     Route::put  ("update/{id}", 'update')   ->middleware ('role:admin'); 
+    Route::put  ("update/{id}", 'update')   ->middleware ('role:admin'); 
     Route::post  ("list", 'list')            ->middleware ('role:admin|user');   
 });
 Route::controller(OrderController::class)->prefix('order')->group(function(){
-    Route::post  ("create", 'create')        ->middleware ('role:admin|user'); 
+    Route::post  ("create", 'create')        ->middleware ('role:user'); 
     Route::get   ("view/{id?}", 'view')      ->middleware ('role:admin|user');
-    Route::delete("delete/{id}", 'destroy')  ->middleware ('role:admin|user');
-    Route::put   ("update/{id}", 'update')   ->middleware ('role:admin|user');
+    Route::delete("delete/{id}", 'destroy')  ->middleware ('role:admin');
+    Route::put   ("update/{id}", 'update')   ->middleware ('role:admin');
     Route::post  ("list", 'list')            ->middleware ('role:admin|user'); 
 });
     
