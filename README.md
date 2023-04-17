@@ -1,66 +1,100 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# E-commerce Api Project
 
-## About Laravel
+## Introduction
+* This e-commerce project is designed to provide an online platform for customers to browse and purchase products from various categories. The project includes functionality such as customer registration and authentication, product listing and search, shopping cart management, order processing, and payment processing.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
+* User registration and authentication: Customers can create an account, log in, and change their password.
+* Product listing and search: Customers can browse products by category and search for products using keywords.
+* Shopping cart management: Customers can add products to their cart, view their cart, and update or remove items from their cart.
+* Order processing: Customers can place orders, view their order history, and track the status of their orders.
+* Payment processing: cash on delivariy
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Technology Stack
+* Laravel: A PHP web application framework used for backend development.
+* MySQL: A popular open-source relational database management system used to store data.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Installation
+* To run the e-commerce project, follow these steps:
+* Clone the repository to your local environment
+* Run composer install to install the necessary dependencies
+* Create a copy of the .env.example file and rename it to .env
+* Configure your database settings in the .env file
+* Run php artisan migrate to migrate the database tables
+* Run php artisan db:seed to seed the database with initial data
+* Run php artisan serve to start the development server
 
-## Learning Laravel
+## API Endpoints
+### User
+* POST {{url}}/auth/create: Register a new customer with name, email, and password.
+* POST {{url}}/auth/login: Authenticate a customer with email and password and generate an API token.
+* POST {{url}}/user/logout: Log out the current customer by invalidating the API token.
+* PUT {{url}}/user/changepassword: Update the current customer's password.
+* POST {{url}}/auth/forgotPasswordLink: Send a password reset email to the customer's email address.
+* POST {{url}}/auth/forgotPassword: Reset the customer's password with a token sent in the password reset email.
+  
+### Admin
+* Category and sub-category management: The admin can create, update, and delete categories and sub-categories to organize the products.
+* Product management: The admin can add, update, and delete products, including their name, description, price, and quantity.
+* Customer management: The admin can view a list of all registered customers and their details.
+* Order management: The admin can view a list of all orders placed.
+* User roles and permissions: The admin can create and assign user roles and permissions to control access to certain features or functionalities.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Category Module:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+* The category module is responsible for managing the product categories in the e-commerce platform. With this module, the admin can create, update, and delete categories to organize the products and make them easier to browse for customers. Additionally, the customers can view the list of available categories and filter products by category.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### API Endpoints:
 
-## Laravel Sponsors
+* post {{url}}/category/list: List all available categories with pagination and search functionality.
+* POST {{url}}/category/create: Add a new category.
+* GET  {{url}}/category/view/{id}: Get the details of a specific category.
+* PUT  {{url}}/category/update/{id}: Update an existing category.
+* DELETE {{url}}/category/delete/{id}: Delete an existing category.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### Sub-Category Module:
 
-### Premium Partners
+The sub-category module is responsible for managing the sub-categories for products. With this module, admin can create, read, update, and delete sub-categories for products. Customers can browse products by sub-category and search for products using keywords.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+API Endpoints:
 
-## Contributing
+post {{url}}/subcategory/list: Retrieve a list of sub-categories.
+GET {{url}}/subcategory/lview: Retrieve a specific sub-category by ID.
+POST {{url}}/subcategory/create: Create a new sub-category.
+PUT {{url}}/subcategory/update//{id}: Update an existing sub-category.
+DELETE {{url}}/subcategory/delete/{id}: Delete a specific sub-category by ID.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Products Module:
 
-## Code of Conduct
+The products module is responsible for managing the products in the e-commerce system. With this module, admin can create, read, update, and delete products. Customers can browse products by category and sub-category, search for products using keywords, view product details, add products to their cart, and place orders.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+API Endpoints:
 
-## Security Vulnerabilities
+post /{{url}}/products/list: Retrieve a list of products.
+POST {{url}}/products/list: Create a new product.
+PUT /api/products/{id}: Update an existing product.
+DELETE {{url}}/products/delete/{id}: Delete a specific product by ID.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### cart Module:
+*user is create to cart and insert to data 
 
-## License
+API Endpoints:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+post /{{url}}/cart/list: Retrieve a list of cart login role of user types.
+POST {{url}}/cart/list: Create a new cart.
+PUT /api/cart/{id}: Update an existing cart.
+DELETE {{url}}/cart/delete/{id}: Delete a specific cart by ID.
+
+### order Module: 
+* user is create to order and insert to data 
+
+API Endpoints:
+
+* post /{{url}}/order/list: Retrieve a list of login role data display.
+* POST {{url}}/order/list: Create a new order.
+* PUT /api/order/{id}: Update an existing order.
+* DELETE {{url}}/order/delete/{id}: Delete a specific order by ID.
+
+
+
