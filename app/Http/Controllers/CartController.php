@@ -8,6 +8,8 @@ use App\Models\Products;
 use Illuminate\Support\Facades\Validator;
 use App\Traits\Listingapi;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class CartController extends Controller
 {
@@ -17,14 +19,39 @@ class CartController extends Controller
      */
     public function list(Request $request)
     {
-        $cart  = Cart::query();
-        if (Auth::user()->role == 'user') {
-            $user_id = Auth::user()->id;
-            $cart = $cart->where('user_id', $user_id);
+        $validaiton = Validator::make($request->all(), [
+            'page'    => 'nullable|integer',
+            'perpage' => 'nullable|integer',
+        ]);   
+        if ($validaiton->fails())
+            return $validaiton->errors();
+        $query = DB::table('users')->orderBy('id', 'Desc'); // display to user data is descending order
+        $perPage = request()->query('perPage', 10);
+        $page = request()->query('page', 1);
+    
+        // Filter the results based on the user role
+        if (Auth::user()->role == 'admin') {
+            // Show all users' data like a admin and user all display 
+        } else {
+            // Only show the logged-in user's data
+            $query->where('id', Auth::user()->id);
         }
-        $cart = $cart->get();
-        return ok('cart detail', $cart);
+    
+        // Paginate the results
+        $users = $query->paginate($perPage, ['*'], 'page', $page);
+    
+        // Return response massage
+        return response()->json([
+            'data' => $users->items(),
+            'total' => $users->total(),
+            'perPage' => $perPage,
+            'currentPage' => $page,
+            // 'lastPage' => $users->lastPage(),
+            // 'from' => $users->firstItem(),
+            // 'to' => $users->lastItem(),
+        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -91,7 +118,7 @@ class CartController extends Controller
     public function destroy($id)
     {
         $cart = Cart::findOrFail($id)->delete();
-        return ok('Cart Delete Successfully');
+        return ok('Cart Delete Success');
     }
     
 }

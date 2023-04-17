@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\Models\User;
 use App\Traits\Listingapi;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -10,9 +9,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Notifications\ResetPasswordNotification;
 use App\Models\PasswordReset;
+use App\Models\User;
 use App\Mail\WelcomeMail;
 use Carbon\Carbon;
-
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
@@ -39,23 +38,23 @@ class AuthController extends Controller
 
         $user = User::create($request->only(['name','email,,password','phone','pincode','address',  'city','role'])
         + [
-            'password'  =>   Hash::make($request->password),
+            'password'  =>   Hash::make($request->password), //create a hash password
             'email'     =>   $request->email,
             
         ]);
-        Mail::to($user->email)->send(new WelcomeMail($user));
+        Mail::to($user->email)->send(new WelcomeMail($user)); // user send to welcome notification 
         
         return ok($user);
     }
     
-// login 
+// User login 
     public function login(Request $request)
     {            
         $request->only('email','password');
 
         if (Auth::attempt(['email'=>$request->email,'password'=>$request->password])){                
         $user = User::where('email',$request->email)->first();
-        $token = $user->createToken('Token')->plainTextToken;
+        $token = $user->createToken('Token')->plainTextToken; // user token genreat..
 
         return response()->json([
             'user'  => $user,
@@ -82,7 +81,10 @@ class AuthController extends Controller
             'email' => $request->email
         ]);
       
-        return response()->json('message => Mail Sent.');
+        return response()->json([
+            'message' => 'Mail Sent successfully',
+            'success' => true
+        ]);
     }
 // user forgot password
     public function forgotPassword(Request $request)
@@ -100,8 +102,11 @@ class AuthController extends Controller
         $user->update([
             'password'  => Hash::make($request->password)
         ]);
-      
-        return response()->json('message => Password Changed Success');
+        return response()->json([
+            'success' => true,
+            'message' => 'Password Changed Success'
+            
+        ]);
     }
 
 

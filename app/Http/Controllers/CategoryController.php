@@ -16,6 +16,14 @@ class CategoryController extends Controller
      */
     public function list(Request $request)
     {
+        $validaiton = Validator::make($request->all(), [
+            'page'    => 'nullable|integer',
+            'perpage' => 'nullable|integer',
+            'search'  => 'nullable|string',
+       
+        ]);   
+        if ($validaiton->fails())
+            return $validaiton->errors();
         
         $query = Category::query(); // get all modules
         $searchable_fields = ['name']; // fields to search
@@ -33,7 +41,6 @@ class CategoryController extends Controller
             'total' => $data['count']
         ]);
     }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -60,18 +67,16 @@ class CategoryController extends Controller
             $category = $id ? Category::findOrFail($id) : Category::all();
             return ok($category);
         }catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Category Not Found.'], 400);
+            return response()->json(['message' => 'category Not Found..'], 400);
         }
     }
-
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request ,$id)
     {
         $validaiton = Validator::make($request->all(), [
-            'name'  => 'required',
-            
+            'name'  => 'required',         
         ]);   
         if ($validaiton->fails()) {
             return error($validaiton->errors()->first());

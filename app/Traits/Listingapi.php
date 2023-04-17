@@ -53,3 +53,4 @@ trait Listingapi
         return ['query' => $query, 'count' => $count];
     }
 }
+

@@ -16,23 +16,54 @@ class ProductsController extends Controller
      */
     public function list(Request $request)
     {
-        $query = Products::query(); // get all modules
-        $searchable_fields = ['name']; // fields to search
+        $validation = Validator::make($request->all(), [
+            'categories_id'         => 'nullable|integer',
+            'subcategories_id'      => 'nullable|integer',
+            'page'                  => 'nullable|integer',
+            'perpage'               => 'nullable|integer',
+            'search'                => 'nullable|string',
+
+        ], [
+            'subcategories_id'      => 'The subcategories_id field must be an integer.',
+            'categories_id.integer' => 'The categories_id field must be an integer.',
+            'page.integer'          => 'The page field must be an integer.',
+            'perpage.integer'       => 'The perpage field must be an integer.',
+            'search.string'         => 'The search field must be a string.',    
+        ]);
     
-        // validate request
-        $this->ListingValidation();
+        if ($validation->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validation->errors()->first(),
+            ]);
+        }
     
-        // filter, search and paginate data
-        $data = $this->filterSearchPagination($query, $searchable_fields);
+        $query = Products::query();
     
-        // return response
+        if ($request->has('categories_id')) {
+            $query->where('categories_id', $request->categories_id);
+        }
+        if ($request->has('subcategories_id')) {
+            $query->where('subcategories_id', $request->subcategories_id);
+        }
+    
+        $searchable_fields = ['name', 'categories_id','subcategories_id'];
+    
+        if ($request->has('search')) {
+            $search = $request->search;
+            $this->filterSearchPagination($query, $searchable_fields);
+        }
+    
+        $perPage = $request->per_page ?? 10;
+    
+        $data = $query->paginate($perPage);
+    
         return response()->json([
             'success' => true,
-            'data' => $data['query']->get(),
-            'total' => $data['count']
+            'data' => $data->items(),
+            'total' => $data->total(),
         ]);
     }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -45,7 +76,7 @@ class ProductsController extends Controller
             'quantity'         => 'required',
             'categories_id'    => 'required|exists:categories,id',
             'subcategories_id' => 'required|exists:subcategories,id',
-            'categories_id' =>[ 'required',
+            'categories_id'    =>[ 'required',
             function($attribute, $value, $fail) {
                 if (!Category::where('id', $value)->exists()) {
                     $fail('Invalid categories_id.');

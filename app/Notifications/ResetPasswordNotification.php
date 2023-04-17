@@ -1,11 +1,10 @@
 <?php
 
 namespace App\Notifications;
-
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class ResetPasswordNotification extends Notification
 {
@@ -31,7 +30,7 @@ class ResetPasswordNotification extends Notification
         return (new MailMessage)
                     ->line('password reset code.')
                     ->line($this->token)
-                    ->action('Notification Action', url('/ResetPasswordNotification',[$this->token]));
+                    ->action('Notification Action', url('/ResetPasswordNotification',[$this->token])); // pass to url token 
     }
     /**
      * Get the array representation of the notification.

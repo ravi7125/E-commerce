@@ -15,24 +15,15 @@ class CheckRole
      */
     public function handle($request, Closure $next, $roles)
     {
-       
         $user = auth()->user();
-        
-        $roles = explode("|", $roles);
-        
-        $status = false;
-        
+          //  dd($role);
+        $roles = explode("|", $roles);    
+        $status = false; 
         $userRole = auth()->user()->role;
-     
         if(in_array($userRole, $roles)){
               $status = true;
         }
-
-        //  dd($role);
-        // if (!$request->user()->hasRole('role')) {
-         
-        //     return response()->json(['error' => 'Unauthorized'], 401);
-        // }
+        //  dd($user);
        if(!$status) return response()->json(['error' => 'Unauthorized'], 403);
         return $next($request);
     }

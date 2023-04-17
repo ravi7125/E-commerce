@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//auth route:
+// Auth route:
 Route::controller(AuthController::class)->prefix('auth')->group(function () { 
     Route::post ("create", 'create'); 
     Route::post  ('login', 'login');
@@ -34,7 +34,7 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
     Route::post  ("list", 'list');    
 });
 
-//User route:
+// User route:
  Route::group(['middleware' => ['auth:sanctum']], function () {
 Route::controller(UserController::class)->prefix('user')->group(function () { 
     Route::get    ("view/{id?}", 'view')    ->middleware ('role:admin|user');
@@ -44,7 +44,7 @@ Route::controller(UserController::class)->prefix('user')->group(function () {
     Route::post ('/changepassword','changepassword')->middleware ('role:admin|user');
     Route::post   ("list", 'list')          ->middleware ('role:admin|user');  
 });
-//Category route:
+// Category route:
 Route::controller(CategoryController::class)->prefix('category')->group(function(){
     Route::post  ("create", 'create')      ->middleware ('role:admin');
     Route::get   ("view/{id?}", 'view')    ->middleware ('role:admin|user');
@@ -52,7 +52,7 @@ Route::controller(CategoryController::class)->prefix('category')->group(function
     Route::put   ("/update/{id}", 'update')->middleware ('role:admin');
     Route::post  ("list",'list')           ->middleware ('role:admin|user'); 
 });
-//Subcategory route:
+// Subcategory route:
 Route::controller(SubcategoryController::class)->prefix('subcategory')->group(function(){
     Route::post  ("create", 'create')      ->middleware ('role:admin'); 
     Route::get   ("view/{id?}", 'view')    ->middleware ('role:admin|user');
@@ -60,7 +60,7 @@ Route::controller(SubcategoryController::class)->prefix('subcategory')->group(fu
     Route::put   ("update/{id}", 'update') ->middleware ('role:admin');
     Route::post   ("list", 'list')         ->middleware ('role:admin|user'); 
     });
-//Products route:    
+// Products route:    
 Route::controller(ProductsController::class)->prefix('products')->group(function(){
     Route::post  ("create", 'create')       ->middleware ('role:admin'); 
     Route::get   ("view/{id?}", 'view')     ->middleware ('role:admin|user'); 
@@ -68,7 +68,7 @@ Route::controller(ProductsController::class)->prefix('products')->group(function
     Route::put   ("update/{id}", 'update')  ->middleware ('role:admin'); 
     Route::post  ("list", 'list')           ->middleware ('role:admin|user');
 });
-    
+// Cart route:       
 Route::controller(CartController::class)->prefix('cart')->group(function(){
     Route::post  ("create", 'create')        ->middleware ('role:admin'); 
     Route::get   ("view/{id?}", 'view')      ->middleware ('role:admin|user'); 
@@ -76,6 +76,7 @@ Route::controller(CartController::class)->prefix('cart')->group(function(){
     Route::put  ("update/{id}", 'update')   ->middleware ('role:admin'); 
     Route::post  ("list", 'list')            ->middleware ('role:admin|user');   
 });
+// Order route:  
 Route::controller(OrderController::class)->prefix('order')->group(function(){
     Route::post  ("create", 'create')        ->middleware ('role:user'); 
     Route::get   ("view/{id?}", 'view')      ->middleware ('role:admin|user');

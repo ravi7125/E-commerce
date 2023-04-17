@@ -32,9 +32,6 @@ class UserController extends Controller
             'total' => $data['count']
         ]);
     }
-
-   
-
     /**
      * Display the specified resource.
      */
@@ -77,13 +74,12 @@ class UserController extends Controller
     
         return ok($user);
     }
-     
+
     public function destroy($id)
     {
         $user = User::findOrFail($id)->delete();
         return ok('User Delete Successfully');
     }
-
 
     //User Change Password
        public function changepassword(Request $request)
@@ -114,9 +110,6 @@ class UserController extends Controller
         public function logout(Request $request)
         {
             $request->user()->currentAccessToken()->delete();
-            return response()->json([
-                "message" => "User successfully logout",
-            ]);
             return response()->json(['message' => 'Logout successfully']);
         }
 

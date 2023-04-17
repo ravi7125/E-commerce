@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use App\Traits\Listingapi;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -18,13 +19,38 @@ class OrderController extends Controller
      */
     public function list(Request $request)
     {
-        $order  = Order::query();
-        if (Auth::user()->role == 'user') {
-            $user_id = Auth::user()->id;
-            $order = $order->where('user_id', $user_id);
+        $validaiton = Validator::make($request->all(), [
+            'page'    => 'nullable|integer',
+            'perpage' => 'nullable|integer',
+           
+        ]);   
+        if ($validaiton->fails())
+            return $validaiton->errors();
+        $query = DB::table('users')->orderBy('id','Desc'); // display to user data is descending order
+        $perPage = request()->query('perPage', 10);
+        $page = request()->query('page', 1);
+    
+        // Filter the results based on the user role
+        if (Auth::user()->role == 'admin') {
+            // Show all users' data like a admin and user all display 
+        } else {
+            // Only show the logged-in user's data
+            $query->where('id', Auth::user()->id);
         }
-        $order = $order->get();
-        return ok('Order details', $order);
+    
+        // Paginate the results
+        $users = $query->paginate($perPage, ['*'], 'page', $page);
+    
+        // Return response massage
+        return response()->json([
+            'data' => $users->items(),
+            'total' => $users->total(),
+            'perPage' => $perPage,
+            'currentPage' => $page,
+            'lastPage' => $users->lastPage(),
+            'from' => $users->firstItem(),
+            'to' => $users->lastItem(),
+        ]);
     }
 
     /**

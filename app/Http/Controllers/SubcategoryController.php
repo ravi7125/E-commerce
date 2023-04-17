@@ -12,28 +12,64 @@ use Illuminate\Http\Request;
 class SubcategoryController extends Controller
 {
     use Listingapi;
-    /**
-     * Display a listing of the resource.
-     */
-    public function list(Request $request)
+
+    // Validation for listing APIs
+    public function ListingValidation()
     {
-        $query = subcategory::query(); // get all modules
-        $searchable_fields = ['name']; // fields to search
+        $this->validate(request(), [
+            'page'      => 'integer',
+            'perPage'   => 'integer',           
+            'search'    => 'nullable',            
+        ]);
+        return true;
+    }
+
+    public function list(Request $request)
+{
+    $validation = Validator::make($request->all(), [
+        'categories_id'         => 'nullable|integer',
+        'page'                  => 'nullable|integer',
+        'perpage'               => 'nullable|integer',
+        'search'                => 'nullable|string',
+    ], [
+        'categories_id.integer' => 'The categories_id field must be an integer.',
+        'page.integer'          => 'The page field must be an integer.',
+        'perpage.integer'       => 'The perpage field must be an integer.',
+        'search.string'         => 'The search field must be a string.',
+    ]);
     
-        // validate request
-        $this->ListingValidation();
-    
-        // filter, search and paginate data
-        $data = $this->filterSearchPagination($query, $searchable_fields);
-    
-        // return response
+    if ($validation->fails()) {
         return response()->json([
-            'success' => true,
-            'data' => $data['query']->get(),
-            'total' => $data['count']
+            'success' => false,
+            'message' => $validation->errors()->first(),
         ]);
     }
 
+    $query = Subcategory::query();
+
+    if ($request->has('categories_id')) {
+        $query->where('categories_id', $request->categories_id);
+    }
+
+    $searchable_fields = ['name', 'categories_id'];
+
+    if ($request->has('search')) {
+        $search = $request->search;
+        $this->filterSearchPagination($query, $searchable_fields);
+    }
+
+    $perPage = $request->per_page ?? 10;
+
+    $data = $query->paginate($perPage);
+
+    return response()->json([
+        'success' => true,
+        'data' => $data->items(),
+        'total' => $data->total(),
+    ]);
+}
+
+    
     /**
      * Show the form for creating a new resource.
      */

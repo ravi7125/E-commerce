@@ -34,13 +34,8 @@ class WelcomeMail extends Mailable
     {
         return $this->subject('Welcome to My Application')
                     ->view('emails.welcome')
-                    ->with([ 'user' => $this->user,]);                      
-                  
+                    ->with(['user' => $this->user,]);                                 
                 }
-    /**
-     * Get the message content definition.
-     */
-
     /**
      * Get the attachments for the message.
      *

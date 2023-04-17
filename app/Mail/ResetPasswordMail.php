@@ -18,14 +18,12 @@ class ResetPasswordMail extends Mailable
     {
        $this->user=$user;
     }
-
         public function envelope(): Envelope
     {
         return new Envelope(
             subject: 'Reset Password Mail',
         );
     }
-
       public function content(): Content
     {
         return new Content(

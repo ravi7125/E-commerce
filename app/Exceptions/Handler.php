@@ -9,19 +9,19 @@ use Illuminate\Auth\AuthenticationException;
 
 class Handler extends ExceptionHandler
 {
-
+    // Display massage show logic 
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof AuthenticationException) {
-            return response()->json(['error' => 'Unauthorized Token'], 401);
+            return response()->json(['error' => 'Unauthorized Token'], 401); // unauthorized token pass to display massage
         }
     
         if ($exception instanceof ModelNotFoundException) {
-            return response()->json(['error' => 'Record not found'], 400);
+            return response()->json(['error' => 'Record not found'], 400);  // false data insert to show error massage 
         }
     
         if ($request->expectsJson()) {
-            return response()->json(['error' => 'Resource not found'], 404);
+            return response()->json(['error' => 'Resource not found'], 404); // false route defind to display error massage 
         }
     
         return parent::render($request, $exception);
